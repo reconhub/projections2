@@ -1,0 +1,15 @@
+# Projections of Future Incidence
+
+Thibaut Jombart 2026-03-20
+
+[![R-CMD-check](https://github.com/reconhub/projections2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/reconhub/projections2/actions/workflows/R-CMD-check.yaml)
+[![Codecov test
+coverage](https://codecov.io/gh/reconhub/projections2/graph/badge.svg)](https://app.codecov.io/gh/reconhub/projections2)
+
+## Getting started
+
+To install the package, use:
+
+``` r
+pak::pak("reconhub/projections2")
+```
