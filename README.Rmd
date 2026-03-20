@@ -1,0 +1,21 @@
+---
+title: "Projections of Future Incidence"
+author: "Thibaut Jombart"
+date: "`r Sys.Date()`"
+output: github_document
+---
+
+
+## Getting started
+
+To install the package, use:
+```{r }
+
+pak::pak("reconhub/projections2")
+
+```
+
+
+
+
+
