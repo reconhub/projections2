@@ -5,11 +5,14 @@ date: "`r Sys.Date()`"
 output: github_document
 ---
 
+ [![R-CMD-check](https://github.com/reconhub/projections2/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/reconhub/projections2/actions/workflows/R-CMD-check.yaml)
+  [![Codecov test coverage](https://codecov.io/gh/reconhub/projections2/graph/badge.svg)](https://app.codecov.io/gh/reconhub/projections2)
+  
 
 ## Getting started
 
 To install the package, use:
-```{r }
+```{r eval = FALSE}
 
 pak::pak("reconhub/projections2")
 
