@@ -7,6 +7,12 @@ the serial interval (time from primary onset to secondary onset).
 ## Usage
 
 ``` r
+project(x, ...)
+
+# Default S3 method
+project(x, ...)
+
+# S3 method for class 'incidence'
 project(
   x,
   R,
