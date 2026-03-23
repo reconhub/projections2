@@ -147,8 +147,27 @@
 #'
 #' }
 #'
+project <- function(x, ...) {
+  UseMethod("project")
+}
 
-project <- function(x, R, si, n_sim = 100, n_days = 7,
+
+
+#' @rdname project
+#' @export
+project.default <- function(x, ...) {
+  msg <- sprintf(
+    "No `project()` method for oject of the class: %s",
+    paste(class(x), collapse = ", ")
+    )
+  stop(msg)
+}
+
+
+
+#' @rdname project
+#' @export
+project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
                     R_fix_within = FALSE,
                     model = c("poisson", "negbin"),
                     size = 0.03,
@@ -158,11 +177,6 @@ project <- function(x, R, si, n_sim = 100, n_days = 7,
   ## Various checks on inputs
 
   model <- match.arg(model)
-
-  if (!inherits(x, "incidence")) {
-    msg <- "x is not an incidence object"
-    stop(msg)
-  }
 
   if (as.integer(mean(incidence::get_interval(x))) != 1L) {
     msg <- sprintf(

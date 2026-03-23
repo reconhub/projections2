@@ -1,3 +1,57 @@
+test_that(
+  "project() issues the right error messages",
+  {
+
+    input <- "toto"
+    class(input) <- c("character", "stuff")    
+    msg <- "No `project\\(\\)` method for oject of the class: character, stuff"
+    expect_error(project(input), msg)
+    
+    msg <- "No `project\\(\\)` method for oject of the class: NULL"
+    expect_error(project(NULL), msg)
+
+    i <- incidence::incidence(1:10, 3)
+    expect_error(project(i),
+                 "daily incidence needed, but interval is 3 days")
+
+    i <- incidence::incidence(1:10, 1, group = letters[1:10])
+    expect_error(project(i),
+                 "cannot use multiple groups in incidence object")
+    i <- incidence::incidence(seq(Sys.Date(), by = "month", length.out = 12), "month")
+    expect_error(project(i),
+                 "daily incidence needed, but interval is 30 days")
+
+    i <- incidence::incidence(1)
+    si <- distcrete::distcrete("gamma", interval = 5L,
+                               shape = 1.5,
+                               scale = 2, w = 0)
+
+    expect_error(project(i, 1, si = si),
+                 "interval used in si is not 1 day, but 5")
+    expect_error(project(i, -1, si = si),
+                 "R < 0 (value: -1.00)", fixed = TRUE)
+    expect_error(project(i, Inf, si = si),
+                 "R is not a finite value", fixed = TRUE)
+    expect_error(project(i, "tamere", si = si),
+                 "R is not numeric", fixed = TRUE)
+    expect_error(project(i, R = list(1), si = si, time_change = 2),
+                 "`R` must be a `list` of size 2 to match 1 time changes; found 1",
+                 fixed = TRUE)
+    expect_error(project(i, si = si, time_change = "pophip"),
+                 "`time_change` must be `numeric`, but is a `character`",
+                 fixed = TRUE)
+    msg <- ifelse(R.version.string > "3.6.3",
+                  "`R` must be a `vector` or a `list` if `time_change` provided; it is a `matrix, array`",
+                  "`R` must be a `vector` or a `list` if `time_change` provided; it is a `matrix`")
+    expect_error(project(i, si = si, time_change = 2, R = matrix(1.2)),
+                 msg,
+                 fixed = TRUE)
+
+
+  }
+)
+
+
 test_that("Projections can be performed for a single day", {
   i <- incidence::incidence(as.Date('2020-01-23'))
   si <- c(0.2, 0.5, 0.2, 0.1)
@@ -86,48 +140,6 @@ test_that("Test that dates start when needed", {
 
 
 
-test_that("Errors are thrown when they should", {
-  expect_error(project(NULL),
-               "x is not an incidence object")
-
-  i <- incidence::incidence(1:10, 3)
-  expect_error(project(i),
-               "daily incidence needed, but interval is 3 days")
-
-  i <- incidence::incidence(1:10, 1, group = letters[1:10])
-  expect_error(project(i),
-               "cannot use multiple groups in incidence object")
-  i <- incidence::incidence(seq(Sys.Date(), by = "month", length.out = 12), "month")
-  expect_error(project(i),
-               "daily incidence needed, but interval is 30 days")
-
-  i <- incidence::incidence(1)
-  si <- distcrete::distcrete("gamma", interval = 5L,
-                             shape = 1.5,
-                             scale = 2, w = 0)
-
-  expect_error(project(i, 1, si = si),
-               "interval used in si is not 1 day, but 5")
-  expect_error(project(i, -1, si = si),
-               "R < 0 (value: -1.00)", fixed = TRUE)
-  expect_error(project(i, Inf, si = si),
-               "R is not a finite value", fixed = TRUE)
-  expect_error(project(i, "tamere", si = si),
-               "R is not numeric", fixed = TRUE)
-  expect_error(project(i, R = list(1), si = si, time_change = 2),
-               "`R` must be a `list` of size 2 to match 1 time changes; found 1",
-               fixed = TRUE)
-  expect_error(project(i, si = si, time_change = "pophip"),
-               "`time_change` must be `numeric`, but is a `character`",
-               fixed = TRUE)
-  msg <- ifelse(R.version.string > "3.6.3",
-                "`R` must be a `vector` or a `list` if `time_change` provided; it is a `matrix, array`",
-                "`R` must be a `vector` or a `list` if `time_change` provided; it is a `matrix`")
-  expect_error(project(i, si = si, time_change = 2, R = matrix(1.2)),
-               msg,
-               fixed = TRUE)
-
-})
 
 
 

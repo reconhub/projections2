@@ -2,9 +2,15 @@
 % Please edit documentation in R/project.R
 \name{project}
 \alias{project}
+\alias{project.default}
+\alias{project.incidence}
 \title{Project future incidence}
 \usage{
-project(
+project(x, ...)
+
+\method{project}{default}(x, ...)
+
+\method{project}{incidence}(
   x,
   R,
   si,
