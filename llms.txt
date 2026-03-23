@@ -18,8 +18,32 @@ pak::pak("reconhub/projections2")
 
 ## All functions
 
-- [`hello_recon()`](http://www.repidemicsconsortium.org/projections2/reference/hello_recon.md)
-  : Hello World
+- [`build_projections()`](http://www.repidemicsconsortium.org/projections2/reference/build_projections.md)
+  : Constructor for projections objects
+- [`as.matrix(`*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/conversions.md)
+  [`as.data.frame(`*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/conversions.md)
+  : Conversion of projections objects
+- [`cumulate(`*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/cumulate.projections.md)
+  : Compute cumulative projections
+- [`merge_add_projections()`](http://www.repidemicsconsortium.org/projections2/reference/merge_add_projections.md)
+  [`` `+`( ``*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/merge_add_projections.md)
+  : Add data of different projections objects
+- [`merge_projections()`](http://www.repidemicsconsortium.org/projections2/reference/merge_projections.md)
+  : Merge a list of projections objects
+- [`plot(`*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/plot.projections.md)
+  [`add_projections()`](http://www.repidemicsconsortium.org/projections2/reference/plot.projections.md)
+  : Plot projections objects
+- [`print(`*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/print.projections.md)
+  : Print method for projections objects
+- [`project()`](http://www.repidemicsconsortium.org/projections2/reference/project.md)
+  : Project future incidence
+- [`get_dates(`*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/projections_accessors.md)
+  : Access content projections objects
+- [`` `[`( ``*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/subset.md)
+  [`subset(`*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/subset.md)
+  : Subsetting 'projections' objects
+- [`summary(`*`<projections>`*`)`](http://www.repidemicsconsortium.org/projections2/reference/summary.projections.md)
+  : Summary for projections objects
 
 # Articles
 

@@ -7,7 +7,17 @@
 <url><loc>http://www.repidemicsconsortium.org/projections2/authors.html</loc></url>
 <url><loc>http://www.repidemicsconsortium.org/projections2/index.html</loc></url>
 <url><loc>http://www.repidemicsconsortium.org/projections2/news/index.html</loc></url>
-<url><loc>http://www.repidemicsconsortium.org/projections2/reference/hello_recon.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/build_projections.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/conversions.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/cumulate.projections.html</loc></url>
 <url><loc>http://www.repidemicsconsortium.org/projections2/reference/index.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/merge_add_projections.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/merge_projections.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/plot.projections.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/print.projections.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/project.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/projections_accessors.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/subset.html</loc></url>
+<url><loc>http://www.repidemicsconsortium.org/projections2/reference/summary.projections.html</loc></url>
 </urlset>
 
