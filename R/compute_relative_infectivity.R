@@ -22,7 +22,7 @@
 #'   computed for `t+1` taking into account past cases and R from time point `1`
 #'   until `t`
 #'
-#' @seealso `compute_force_infection` does a similar
+#' @seealso `compute_base_foi` does a similar
 #'   thing, but also factors in the reproduction numbers of all individuals,
 #'   resulting in an estimate of average number of new cases at `t+1`.
 #'

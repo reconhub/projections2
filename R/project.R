@@ -338,7 +338,7 @@ project <- function(x, R, si, n_sim = 100, n_days = 7,
 
     ## lambda is the force of infection, i.e. the average number of new cases
     ## produced at a given time
-    lambda <- compute_force_infection(si, out, R_t, i, instantaneous_R)
+    lambda <- compute_base_foi(si, out, R_t, i, instantaneous_R)
 
     if (model == "poisson") {
       out <- rbind(out, stats::rpois(n_sim, lambda))
