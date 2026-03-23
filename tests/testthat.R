@@ -7,6 +7,7 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
+library(distcrete)
 library(incidence)
 library(projections2)
 

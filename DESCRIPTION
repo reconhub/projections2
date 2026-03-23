@@ -8,6 +8,7 @@ License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 Suggests:
+    distcrete,
     EpiEstim,
     incidence2,
     knitr,
