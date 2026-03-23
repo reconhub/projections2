@@ -52,6 +52,34 @@ get_dates(pred_1)
 max(i$dates) # predictions start 1 day after last incidence
 
 })}
-#> Loading required package: distcrete
-#> Warning: there is no package called ‘distcrete’
+#> > dat <- c(0, 2, 2, 3, 3, 5, 5, 5, 6, 6, 6, 6)
+#> > i <- incidence(dat)
+#> > si <- distcrete("gamma", interval = 1L, shape = 1.5, scale = 2, w = 0)
+#> > pred_1 <- project(i, 1.2, si, n_days = 30)
+#> > pred_1
+#> 
+#> /// Incidence projections //
+#> 
+#>   // class: projections, matrix, array
+#>   // 30 dates (rows); 100 simulations (columns)
+#> 
+#>  // first rows/columns:
+#>    [,1] [,2] [,3] [,4] [,5] [,6]
+#> 7     4    2    4    0    1    3
+#> 8     7    3    2    0    0    1
+#> 9     3    0    1    2    1    1
+#> 10    4    2    1    5    1    1
+#>  .
+#>  .
+#>  .
+#> 
+#>  // dates:
+#>  [1]  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+#> [26] 32 33 34 35 36
+#> 
+#> > get_dates(pred_1)
+#>  [1]  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24 25 26 27 28 29 30 31
+#> [26] 32 33 34 35 36
+#> > max(i$dates)
+#> [1] 6
 ```

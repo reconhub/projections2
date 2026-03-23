@@ -64,5 +64,4 @@ if (require(incidence)) {
   plot(y)
 
 }
-#> Loading required package: incidence
 ```

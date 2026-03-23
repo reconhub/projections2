@@ -52,6 +52,7 @@ if (require(distcrete) &&
   plot(pred_1_cum)
 }
 #> Loading required package: distcrete
-#> Warning: there is no package called ‘distcrete’
+#> Loading required package: incidence
+
 
 ```
