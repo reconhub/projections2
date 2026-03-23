@@ -10,8 +10,11 @@ LazyData: true
 Suggests:
     distcrete,
     EpiEstim,
+    ggplot2,
     incidence2,
     knitr,
+    magrittr,
+    outbreaks,
     rmarkdown,
     roxygen2,
     testthat (>= 3.0.0)
