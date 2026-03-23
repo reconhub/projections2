@@ -179,5 +179,21 @@ plot(i[1:200]) %>%
 
 }
 #> Loading required package: outbreaks
-#> Warning: there is no package called ‘outbreaks’
+#> Loading required package: magrittr
+#> Warning: `aes_string()` was deprecated in ggplot2 3.0.0.
+#> ℹ Please use tidy evaluation idioms with `aes()`.
+#> ℹ See also `vignette("ggplot2-in-packages")` for more information.
+#> ℹ The deprecated feature was likely used in the incidence package.
+#>   Please report the issue at <https://github.com/reconhub/incidence/issues>.
+#> Scale for x is already present.
+#> Adding another scale for x, which will replace the existing scale.
+#> Scale for x is already present.
+#> Adding another scale for x, which will replace the existing scale.
+#> Scale for x is already present.
+#> Adding another scale for x, which will replace the existing scale.
+#> Scale for x is already present.
+#> Adding another scale for x, which will replace the existing scale.
+#> Scale for x is already present.
+#> Adding another scale for x, which will replace the existing scale.
+
 ```

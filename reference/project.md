@@ -188,6 +188,12 @@ proj_5 <- project(i,
 plot(proj_5)
 
 }
-#> Loading required package: outbreaks
-#> Warning: there is no package called ‘outbreaks’
+#> Scale for x is already present.
+#> Adding another scale for x, which will replace the existing scale.
+
+#> Scale for x is already present.
+#> Adding another scale for x, which will replace the existing scale.
+#> Scale for x is already present.
+#> Adding another scale for x, which will replace the existing scale.
+
 ```
