@@ -65,7 +65,8 @@ serial interval (time from primary onset to secondary onset).</p>
 <span>  model <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"poisson"</span>, <span class="st">"negbin"</span><span class="op">)</span>,</span>
 <span>  size <span class="op">=</span> <span class="fl">0.03</span>,</span>
 <span>  time_change <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  instantaneous_R <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  instantaneous_R <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -74,8 +75,12 @@ serial interval (time from primary onset to secondary onset).</p>
 
 
 <dl><dt id="arg-x">x<a class="anchor" aria-label="anchor" href="#arg-x"></a></dt>
-<dd><p>An <code>incidence</code> object containing daily incidence; other time
-intervals will trigger an error.</p></dd>
+<dd><p>Incidence data provided as `incidence` or `incidence2` object
+containing daily incidence; other time intervals will trigger an error.</p></dd>
+
+
+<dt id="arg--">...<a class="anchor" aria-label="anchor" href="#arg--"></a></dt>
+<dd><p>Further arguments to be passed to other methods.</p></dd>
 
 
 <dt id="arg-r">R<a class="anchor" aria-label="anchor" href="#arg-r"></a></dt>

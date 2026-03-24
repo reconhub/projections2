@@ -23,7 +23,8 @@ project(
   model = c("poisson", "negbin"),
   size = 0.03,
   time_change = NULL,
-  instantaneous_R = FALSE
+  instantaneous_R = FALSE,
+  ...
 )
 ```
 
@@ -31,8 +32,13 @@ project(
 
 - x:
 
-  An `incidence` object containing daily incidence; other time intervals
-  will trigger an error.
+  Incidence data provided as \`incidence\` or \`incidence2\` object
+  containing daily incidence; other time intervals will trigger an
+  error.
+
+- ...:
+
+  Further arguments to be passed to other methods.
 
 - R:
 
