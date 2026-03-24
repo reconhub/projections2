@@ -412,10 +412,13 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
     stop(msg)
   }
 
-  if (ncol(incidence::get_counts(x)) > 1L) {
-    msg <- sprintf("cannot use multiple groups in incidence object")
-    stop(msg)
+  has_groups <- ncol(incidence::get_counts(x)) > 1L
+  if (has_groups) {
+    msg <- sprintf("stratification in incidence object will be ignored")
+    if (!quiet) warning(msg)
+    x <- incidence::pool(x)
   }
+
 
 
   ## We extract the data we need from the incidence object and use the
@@ -464,7 +467,7 @@ project.incidence2 <- function(x, R, si, n_sim = 100, n_days = 7,
 
   has_groups <- length(incidence2::get_groups(x))
   if (has_groups) {
-    msg <- sprintf("stratificaction in incidence2 object will be ignored")
+    msg <- sprintf("stratification in incidence2 object will be ignored")
     if (!quiet) warning(msg)
     x <- incidence2::regroup(x)
   }

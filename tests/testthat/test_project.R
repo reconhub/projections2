@@ -14,9 +14,6 @@ test_that(
     expect_error(project(i),
                  "daily incidence needed, but interval is 3 days")
 
-    i <- incidence::incidence(1:10, 1, group = letters[1:10])
-    expect_error(project(i),
-                 "cannot use multiple groups in incidence object")
     i <- incidence::incidence(seq(Sys.Date(), by = "month", length.out = 12), "month")
     expect_error(project(i),
                  "daily incidence needed, but interval is 30 days")
@@ -282,7 +279,26 @@ test_that(
       gender = rep(c("m", "f"), c(4, 7))      
     )
     i <- incidence2::incidence(linelist, "onset", group = "gender", interval = 1)
-    msg <- "stratificaction in incidence2 object will be ignored"
+    msg <- "stratification in incidence2 object will be ignored"
+    expect_warning(project(i, R = 12, si = 1), msg)
+    expect_no_warning(project(i, R = 12, si = 1, quiet = TRUE))
+
+  }
+)
+
+
+
+
+
+test_that(
+  "Regrouping data for incidence objects", {
+
+    linelist <- data.frame(
+      onset = c(1, 3, 4, 4, 5, 5, 5, 6, 7, 7, 7),
+      gender = rep(c("m", "f"), c(4, 7))      
+    )
+    i <- incidence::incidence(linelist$onset, group = linelist$gender)
+    msg <- "stratification in incidence object will be ignored"
     expect_warning(project(i, R = 12, si = 1), msg)
     expect_no_warning(project(i, R = 12, si = 1, quiet = TRUE))
 
