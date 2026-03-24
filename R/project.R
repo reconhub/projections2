@@ -388,14 +388,20 @@ project.integer <- function(x,
 
 
 
+
+
 #' @rdname project
 #' @export
+#' @param quiet A `logical` indicating if warnings should be issued when
+#'   relevant. Defaults to `FALSE`.
 project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
                     R_fix_within = FALSE,
                     model = c("poisson", "negbin"),
                     size = 0.03,
                     time_change = NULL,
-                    instantaneous_R = FALSE, ...) {
+                    instantaneous_R = FALSE,
+                    quiet = FALSE,
+                    ...) {
 
   ## checks specific to incidence objects
   if (as.integer(mean(incidence::get_interval(x))) != 1L) {
@@ -416,6 +422,58 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
   ## project.numeric method.
   incid <- as.numeric(as.vector(incidence::get_counts(x)))
   dates <- incidence::get_dates(x)
+  project(incid,
+          R = R,
+          si = si,
+          n_sim = n_sim,
+          n_days = n_days,
+          dates = dates,
+          R_fix_within = R_fix_within,
+          size = size,
+          time_change = time_change,
+          instantaneous_R = instantaneous_R
+          )
+
+}
+
+
+
+
+
+#' @rdname project
+#' @export
+project.incidence2 <- function(x, R, si, n_sim = 100, n_days = 7,
+                    R_fix_within = FALSE,
+                    model = c("poisson", "negbin"),
+                    size = 0.03,
+                    time_change = NULL,
+                    instantaneous_R = FALSE,
+                    quiet = FALSE,
+                    ...) {
+
+  ## checks specific to incidence2 objects
+  dates <- incidence2::get_dates(x)
+  interval <- get_n(dates)
+  if (interval != 1L) {
+    msg <- sprintf(
+      "daily incidence needed, but interval is %d days",
+      interval
+    )
+    stop(msg)
+  }
+
+  has_groups <- length(incidence2::get_groups(x))
+  if (has_groups) {
+    msg <- sprintf("stratificaction in incidence2 object will be ignored")
+    if (!quiet) warning(msg)
+    x <- incidence2::regroup(x)
+  }
+
+
+  ## We extract the data we need from the incidence object and use the
+  ## project.numeric method.
+  incid <- as.numeric(as.vector(incidence2::get_count_value(x)))
+  dates <- incidence2::get_dates(x)
   project(incid,
           R = R,
           si = si,
