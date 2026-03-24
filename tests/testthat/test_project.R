@@ -269,3 +269,22 @@ test_that(
     
   }
 )
+
+
+
+
+
+test_that(
+  "Regrouping data for incidence2 objects", {
+
+    linelist <- data.frame(
+      onset = c(1, 3, 4, 4, 5, 5, 5, 6, 7, 7, 7),
+      gender = rep(c("m", "f"), c(4, 7))      
+    )
+    i <- incidence2::incidence(linelist, "onset", group = "gender", interval = 1)
+    msg <- "stratificaction in incidence2 object will be ignored"
+    expect_warning(project(i, R = 12, si = 1), msg)
+    expect_no_warning(project(i, R = 12, si = 1, quiet = TRUE))
+
+  }
+)
