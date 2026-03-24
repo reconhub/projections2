@@ -10,8 +10,8 @@
 #'   code), Sangeeta Bhatia (Negative Binomial model), Stephane Ghozzi (bug fixes
 #'   time varying R)
 #'
-#' @param x An \code{incidence} object containing daily incidence; other time
-#'   intervals will trigger an error.
+#' @param x Incidence data provided as `incidence` or `incidence2` object
+#'   containing daily incidence; other time intervals will trigger an error.
 #'
 #' @param R A vector of numbers representing plausible reproduction numbers; for
 #'   instance, these can be samples from a posterior distribution using the
@@ -60,6 +60,8 @@
 #'   mean number of secondary cases made at time `t` by all cases infected
 #'   before `t`. In other words, `R` will characterise onwards transmission at
 #'   a given time.
+#'
+#' @param ... Further arguments to be passed to other methods.
 #'
 #' @details The decision to fix R values within simulations
 #'   (\code{R_fix_within}) reflects two alternative views of the uncertainty
@@ -172,7 +174,7 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
                     model = c("poisson", "negbin"),
                     size = 0.03,
                     time_change = NULL,
-                    instantaneous_R = FALSE) {
+                    instantaneous_R = FALSE, ...) {
 
   ## Various checks on inputs
 

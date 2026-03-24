@@ -20,12 +20,15 @@ project(x, ...)
   model = c("poisson", "negbin"),
   size = 0.03,
   time_change = NULL,
-  instantaneous_R = FALSE
+  instantaneous_R = FALSE,
+  ...
 )
 }
 \arguments{
-\item{x}{An \code{incidence} object containing daily incidence; other time
-intervals will trigger an error.}
+\item{x}{Incidence data provided as `incidence` or `incidence2` object
+containing daily incidence; other time intervals will trigger an error.}
+
+\item{...}{Further arguments to be passed to other methods.}
 
 \item{R}{A vector of numbers representing plausible reproduction numbers; for
 instance, these can be samples from a posterior distribution using the
