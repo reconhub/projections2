@@ -4,7 +4,6 @@ NULL
 new_projections <- function(x, dates, cumulative, ..., class = character()) {
   
   stopifnot(is.array(x) || is.matrix(x))
-  stopifnot(is(dates, "Date") || is.numeric(dates))
   stopifnot(is.logical(cumulative))
   
   if (length(dates) != nrow(x)) {
@@ -59,9 +58,7 @@ new_projections <- function(x, dates, cumulative, ..., class = character()) {
 #'
 build_projections <- function(x, dates = NULL, cumulative = FALSE,
                               order_dates = TRUE) {
-  x <- as.matrix(x) # todo - this allows dataframes to be used.  This is
-                    #        tested for but not documented.
-  
+  x <- as.matrix(x)
   if (is.null(dates)) {
     dates <- seq_len(nrow(x)) - 1L
   }

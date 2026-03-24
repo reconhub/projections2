@@ -255,3 +255,17 @@ test_that(
     }
   }
 )
+
+
+
+
+test_that(
+  "project works with incidence2 inputs", {
+
+    i <- incidence2::incidence(data.frame(t = c(0, 1, 1, 3, 3, 4)), "t", interval = 1)
+    expect_no_error(res <- project(i, R = 1.123, si = 1))
+    expect_identical(dim(res), c(7L, 100L))
+    expect_equal(as.integer(get_dates(res)), 5:11)
+    
+  }
+)

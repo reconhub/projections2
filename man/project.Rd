@@ -6,6 +6,7 @@
 \alias{project.numeric}
 \alias{project.integer}
 \alias{project.incidence}
+\alias{project.incidence2}
 \title{Project future incidence}
 \usage{
 project(x, ...)
@@ -53,6 +54,22 @@ project(x, ...)
   size = 0.03,
   time_change = NULL,
   instantaneous_R = FALSE,
+  quiet = FALSE,
+  ...
+)
+
+\method{project}{incidence2}(
+  x,
+  R,
+  si,
+  n_sim = 100,
+  n_days = 7,
+  R_fix_within = FALSE,
+  model = c("poisson", "negbin"),
+  size = 0.03,
+  time_change = NULL,
+  instantaneous_R = FALSE,
+  quiet = FALSE,
   ...
 )
 }
@@ -113,6 +130,9 @@ If `instantaneous_R = TRUE` then values of `R` at time `t` will govern the
 mean number of secondary cases made at time `t` by all cases infected
 before `t`. In other words, `R` will characterise onwards transmission at
 a given time.}
+
+\item{quiet}{A `logical` indicating if warnings should be issued when
+relevant. Defaults to `FALSE`.}
 }
 \description{
 `project` is a generic function which generates forecasts of incidence using

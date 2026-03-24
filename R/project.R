@@ -453,7 +453,7 @@ project.incidence2 <- function(x, R, si, n_sim = 100, n_days = 7,
 
   ## checks specific to incidence2 objects
   dates <- incidence2::get_dates(x)
-  interval <- get_n(dates)
+  interval <- grates::get_n(dates)
   if (interval != 1L) {
     msg <- sprintf(
       "daily incidence needed, but interval is %d days",

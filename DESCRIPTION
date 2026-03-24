@@ -11,6 +11,7 @@ Suggests:
     distcrete,
     EpiEstim,
     ggplot2,
+    grates,
     incidence2,
     knitr,
     magrittr,
