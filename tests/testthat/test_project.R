@@ -225,13 +225,33 @@ test_that(
 
     ## expectations: each time step incidence should be multiplied by 1.5 on
     ## average
-    res <- project(10000, R = 1.5, si = 1, n_sim = 100)
+    res <- project(1e4, R = 1.5, si = 1, n_sim = 100)
     expect_true(quantile(as.vector(res[1, ]), probs = 0.1) > 14000)
     expect_true(quantile(as.vector(res[1, ]), probs = 0.9) < 16000)
 
-    for (t in 2:6) {
+    for (t in 2:7) {
       expect_true(all(as.vector(res[t, ] / res[t-1, ]) > 1.4))
       expect_true(all(as.vector(res[t, ] / res[t-1, ]) < 1.6))
+    }
+  }
+)
+
+
+
+
+
+test_that(
+  "Average projections are within expected bounds - NegBin model", {
+
+    ## expectations: each time step incidence should be multiplied by 1.5 on
+    ## average
+    res <- project(10000, R = 1.5, si = 1, n_sim = 100, model = "negbin")
+    expect_true(quantile(as.vector(res[1, ]), probs = 0.1) > 11000)
+    expect_true(quantile(as.vector(res[1, ]), probs = 0.9) < 19000)
+
+    for (t in 2:6) {
+      expect_true(all(as.vector(res[t, ] / res[t-1, ]) > 1.2))
+      expect_true(all(as.vector(res[t, ] / res[t-1, ]) < 1.8))
     }
   }
 )
