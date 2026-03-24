@@ -57,6 +57,23 @@ project(
   size = 0.03,
   time_change = NULL,
   instantaneous_R = FALSE,
+  quiet = FALSE,
+  ...
+)
+
+# S3 method for class 'incidence2'
+project(
+  x,
+  R,
+  si,
+  n_sim = 100,
+  n_days = 7,
+  R_fix_within = FALSE,
+  model = c("poisson", "negbin"),
+  size = 0.03,
+  time_change = NULL,
+  instantaneous_R = FALSE,
+  quiet = FALSE,
   ...
 )
 ```
@@ -144,6 +161,11 @@ project(
   secondary cases made at time \`t\` by all cases infected before \`t\`.
   In other words, \`R\` will characterise onwards transmission at a
   given time.
+
+- quiet:
+
+  A \`logical\` indicating if warnings should be issued when relevant.
+  Defaults to \`FALSE\`.
 
 ## Details
 
