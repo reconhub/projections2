@@ -73,9 +73,6 @@ test_that("Projections throw warning if si[1] = 0", {
 })
 
 
-
-
-
 test_that("Projections can be performed for a single day", {
   i <- incidence::incidence(as.Date('2020-01-23'))
   si <- c(0.2, 0.5, 0.2, 0.1)
@@ -177,7 +174,7 @@ test_that("Test R_fix_within", {
 
 
 
-test_that("Test instantaneous_R = TRUE", {
+test_that("Re-estimation of instantaneous R gives expected results", {
 
   ## Check that when projecting with instantaneous_R = TRUE, and then
   ## reestimating R with EpiEstim::estimate_R,
@@ -218,3 +215,23 @@ test_that("Test instantaneous_R = TRUE", {
   ## excluding first time step as EpiEstim start estimation on 2nd time step
   expect_true(all(abs(daily_R$`Mean(R)`[-1] - R[-1]) < 0.05))
 })
+
+
+
+
+
+test_that(
+  "Average projections are within expected bounds - Poisson model", {
+
+    ## expectations: each time step incidence should be multiplied by 1.5 on
+    ## average
+    res <- project(10000, R = 1.5, si = 1, n_sim = 100)
+    expect_true(quantile(as.vector(res[1, ]), probs = 0.1) > 14000)
+    expect_true(quantile(as.vector(res[1, ]), probs = 0.9) < 16000)
+
+    for (t in 2:6) {
+      expect_true(all(as.vector(res[t, ] / res[t-1, ]) > 1.4))
+      expect_true(all(as.vector(res[t, ] / res[t-1, ]) < 1.6))
+    }
+  }
+)
