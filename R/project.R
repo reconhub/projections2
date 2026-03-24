@@ -1,17 +1,17 @@
 #' Project future incidence
 #'
-#' This function simulates future incidence based on past incidence data, a
-#' selection of plausible reproduction numbers (R), and the distribution of the
-#' serial interval (time from primary onset to secondary onset).
+#' `project` is a generic function which generates forecasts of incidence using
+#' an epidemic curve, estimates of the reproduction number (R) and of the serial
+#' interval distribution. It has methods for incidence provided as numeric
+#' values, an `incidence` object, or an `incidence2` object.
 #'
 #' @export
 #'
-#' @author Pierre Nouvellet (original model), Thibaut Jombart (bulk of the
-#'   code), Sangeeta Bhatia (Negative Binomial model), Stephane Ghozzi (bug fixes
-#'   time varying R)
+#' @author Thibaut Jombart, Pierre Nouvellet, Sangeeta Bhatia, Stephane Ghozzi
 #'
-#' @param x Incidence data provided as `incidence` or `incidence2` object
-#'   containing daily incidence; other time intervals will trigger an error.
+#' @param x Incidence data provided as `numeric` values, `incidence` or
+#'   `incidence2` object containing daily incidence; other time intervals will
+#'   trigger an error.
 #'
 #' @param R A vector of numbers representing plausible reproduction numbers; for
 #'   instance, these can be samples from a posterior distribution using the
@@ -169,27 +169,24 @@ project.default <- function(x, ...) {
 
 #' @rdname project
 #' @export
-project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
+#' @param dates an optional vector of dates; if not provided, the first date
+#'   will be 1.
+project.numeric <- function(x, R, si, dates = NULL, n_sim = 100, n_days = 7,
                     R_fix_within = FALSE,
                     model = c("poisson", "negbin"),
                     size = 0.03,
                     time_change = NULL,
                     instantaneous_R = FALSE, ...) {
 
-  ## Various checks on inputs
-
+  ## Input checks
+  if (is.null(dates)) {
+    dates <- seq_along(x)
+  }
   model <- match.arg(model)
 
-  if (as.integer(mean(incidence::get_interval(x))) != 1L) {
-    msg <- sprintf(
-      "daily incidence needed, but interval is %d days",
-      as.integer(mean(incidence::get_interval(x)))
-    )
-    stop(msg)
-  }
-
-  if (ncol(incidence::get_counts(x)) > 1L) {
-    msg <- sprintf("cannot use multiple groups in incidence object")
+  if (!is.vector(R)) {
+    msg <- sprintf("`R` must be a `vector` or a `list` if `time_change` provided; it is a `%s`",
+                   paste(class(R), collapse = ", "))
     stop(msg)
   }
 
@@ -198,34 +195,26 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
   if (!is.null(time_change)) {
     if (!is.numeric(time_change)) {
       msg <- sprintf("`time_change` must be `numeric`, but is a `%s`",
-        paste(class(time_change), collapse = ", "))
+                     paste(class(time_change), collapse = ", "))
       stop(msg)
     }
 
     n_time_periods <- length(time_change) + 1
 
-    if (!is.vector(R)) {
-      msg <- sprintf("`R` must be a `vector` or a `list` if `time_change` provided; it is a `%s`",
-        paste(class(R), collapse = ", "))
-      stop(msg)
-    }
-
     if (length(R) != n_time_periods) {
       msg <- sprintf("`R` must be a `list` of size %d to match %d time changes; found %d",
-        n_time_periods,
-        n_time_periods - 1,
-        length(R))
+                     n_time_periods,
+                     n_time_periods - 1,
+                     length(R))
       stop(msg)
     }
   }
 
   assert_R(R)
 
-
-  ## useful variables
-  n_dates_x <- nrow(incidence::get_counts(x))
+  n_dates_x <- length(x)
   t_max <- n_days + n_dates_x - 1
-
+  
   # si is the the pmf of the serial interval starting at day 1, i.e. one day
   # after symptom onset
   if (inherits(si, "distcrete")) {
@@ -262,23 +251,10 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
     time_change <- Inf
   }
 
-
-  ## Computation of projections: we use the basic branching process with a
-  ## Poisson likelihood, identical to the one used for estimating R0 in EpiEstim
-  ## and earlyR. The force of infection on a given day is the sum of individual
-  ## forces of infection. The individual force of infection is computed as the
-  ## R0 multiplied by the pmf of the serial interval si for the corresponding day:
-
-  ## lambda_{i,t} = R0(t_i) si(t - t_i)
-
-  ## where 'si' is the PMF of the serial interval, 'ws' it's reverse, and
-  ## 't_i' is the date of onset of case 'i'.
-
-
   ## initial conditions
-  I0 <- matrix(incidence::get_counts(x), nrow = n_dates_x, ncol = n_sim)
+  I0 <- matrix(x, nrow = n_dates_x, ncol = n_sim)
 
-  ## projection: read until t and project at t+1
+  ## initialise results
   out <- I0
   t_start <- n_dates_x + 1
   t_stop <- t_max + 1
@@ -292,13 +268,14 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
   ## the simulation, but really is max(x$dates) + 1
   time_change <- t_start + time_change - 1
 
-  ## handling time periods: to cover the more generic cases when `R` can change
-  ## over different time periods, we treat all simulations like having time
-  ## periods, with `R` being a list of vectors, one for each time period. If
-  ## there are no changes, we just consider this is a single time period, so put
-  ## `R` in a list of length 1. If there are `n` changes and the user provided a
-  ## vector for R of length `n + 1`, we assume the `R` is constant per time
-  ## period and input is silently converted to a list of length `n + 1`.
+  ## On handling time periods: to cover the more generic cases when `R` can
+  ## change over different time periods, we treat all simulations like having
+  ## time periods, with `R` being a list of vectors, one for each time
+  ## period. If there are no changes, we just consider this is a single time
+  ## period, so put `R` in a list of length 1. If there are `n` changes and the
+  ## user provided a vector for R of length `n + 1`, we assume the `R` is
+  ## constant per time period and input is silently converted to a list of
+  ## length `n + 1`.
 
 
   if (!is.list(R)) { # i.e. R is a vector and needs conversion to a list
@@ -313,13 +290,6 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
   ## On the drawing of R values: either these are constant within simulations,
   ## so drawn once for all simulations, or they need drawing at every time step
   ## for every simulations.
-
-  ## On the handling of reporting: reporting first affects the force of
-  ## infection lambda, with the underlying assumption that the true epicurve
-  ## multiplied by the (constant) reporting results in the observed one. Then,
-  ## the true incidence (true_I) is determined using this lambda (Poisson
-  ## process) and we apply effects sampling to this true incidence to get the
-  ## projected one, using a Binomial sampling.
 
   if (all(is.finite(time_change))) {
     time_change_boundaries <- c(1, time_change, t_stop+1)
@@ -380,7 +350,82 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
 
   out <- out[(n_dates_x + 1):(n_dates_x + n_days), , drop = FALSE]
 
-  dates <- utils::tail(get_dates(x), 1) + seq_len(nrow(out))
+  dates <- utils::tail(dates, 1) + seq_len(nrow(out))
 
   build_projections(out, dates, FALSE)
+}
+
+
+
+
+#' @rdname project
+#' @export
+project.integer <- function(x,
+                            R,
+                            si,
+                            dates = NULL,
+                            n_sim = 100,
+                            n_days = 7,
+                            R_fix_within = FALSE,
+                            model = c("poisson", "negbin"),
+                            size = 0.03,
+                            time_change = NULL,
+                            instantaneous_R = FALSE, ...) {
+
+  project(as.numeric(x),
+          R = R,
+          si = si,
+          dates = dates,
+          n_sim = n_sim,
+          R_fix_within = R_fix_within,
+          model = model,
+          size = size,
+          time_change = time_change,
+          instantaneous_R = instantaneous_R,
+          ...
+          )
+}
+
+
+
+#' @rdname project
+#' @export
+project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
+                    R_fix_within = FALSE,
+                    model = c("poisson", "negbin"),
+                    size = 0.03,
+                    time_change = NULL,
+                    instantaneous_R = FALSE, ...) {
+
+  ## checks specific to incidence objects
+  if (as.integer(mean(incidence::get_interval(x))) != 1L) {
+    msg <- sprintf(
+      "daily incidence needed, but interval is %d days",
+      as.integer(mean(incidence::get_interval(x)))
+    )
+    stop(msg)
+  }
+
+  if (ncol(incidence::get_counts(x)) > 1L) {
+    msg <- sprintf("cannot use multiple groups in incidence object")
+    stop(msg)
+  }
+
+
+  ## We extract the data we need from the incidence object and use the
+  ## project.numeric method.
+  incid <- as.numeric(as.vector(incidence::get_counts(x)))
+  dates <- incidence::get_dates(x)
+  project(incid,
+          R = R,
+          si = si,
+          n_sim = n_sim,
+          n_days = n_days,
+          dates = dates,
+          R_fix_within = R_fix_within,
+          size = size,
+          time_change = time_change,
+          instantaneous_R = instantaneous_R
+          )
+
 }

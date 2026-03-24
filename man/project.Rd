@@ -3,12 +3,44 @@
 \name{project}
 \alias{project}
 \alias{project.default}
+\alias{project.numeric}
+\alias{project.integer}
 \alias{project.incidence}
 \title{Project future incidence}
 \usage{
 project(x, ...)
 
 \method{project}{default}(x, ...)
+
+\method{project}{numeric}(
+  x,
+  R,
+  si,
+  dates = NULL,
+  n_sim = 100,
+  n_days = 7,
+  R_fix_within = FALSE,
+  model = c("poisson", "negbin"),
+  size = 0.03,
+  time_change = NULL,
+  instantaneous_R = FALSE,
+  ...
+)
+
+\method{project}{integer}(
+  x,
+  R,
+  si,
+  dates = NULL,
+  n_sim = 100,
+  n_days = 7,
+  R_fix_within = FALSE,
+  model = c("poisson", "negbin"),
+  size = 0.03,
+  time_change = NULL,
+  instantaneous_R = FALSE,
+  ...
+)
 
 \method{project}{incidence}(
   x,
@@ -25,8 +57,9 @@ project(x, ...)
 )
 }
 \arguments{
-\item{x}{Incidence data provided as `incidence` or `incidence2` object
-containing daily incidence; other time intervals will trigger an error.}
+\item{x}{Incidence data provided as `numeric` values, `incidence` or
+`incidence2` object containing daily incidence; other time intervals will
+trigger an error.}
 
 \item{...}{Further arguments to be passed to other methods.}
 
@@ -42,6 +75,9 @@ providing its mass function, starting a day 1, so that `si[i]` is the PMF
 for serial interval of `i`. The model implicitly assumes that `si[0] = 0`.
 For functions, we strongly recommend using the RECON package
 \code{distcrete} to obtain such distribution (see example).}
+
+\item{dates}{an optional vector of dates; if not provided, the first date
+will be 1.}
 
 \item{n_sim}{The number of epicurves to simulate. Defaults to 100.}
 
@@ -79,9 +115,10 @@ before `t`. In other words, `R` will characterise onwards transmission at
 a given time.}
 }
 \description{
-This function simulates future incidence based on past incidence data, a
-selection of plausible reproduction numbers (R), and the distribution of the
-serial interval (time from primary onset to secondary onset).
+`project` is a generic function which generates forecasts of incidence using
+an epidemic curve, estimates of the reproduction number (R) and of the serial
+interval distribution. It has methods for incidence provided as numeric
+values, an `incidence` object, or an `incidence2` object.
 }
 \details{
 The decision to fix R values within simulations
@@ -171,7 +208,5 @@ plot(proj_5)
 
 }
 \author{
-Pierre Nouvellet (original model), Thibaut Jombart (bulk of the
-  code), Sangeeta Bhatia (Negative Binomial model), Stephane Ghozzi (bug fixes
-  time varying R)
+Thibaut Jombart, Pierre Nouvellet, Sangeeta Bhatia, Stephane Ghozzi
 }

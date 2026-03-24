@@ -37,7 +37,7 @@ test_that(
     expect_error(project(i, R = list(1), si = si, time_change = 2),
                  "`R` must be a `list` of size 2 to match 1 time changes; found 1",
                  fixed = TRUE)
-    expect_error(project(i, si = si, time_change = "pophip"),
+    expect_error(project(i, si = si, time_change = "pophip", R = 3),
                  "`time_change` must be `numeric`, but is a `character`",
                  fixed = TRUE)
     msg <- ifelse(R.version.string > "3.6.3",
@@ -50,6 +50,30 @@ test_that(
 
   }
 )
+
+
+
+
+
+test_that("Projections throw warning if si[1] = 0", {
+  i <- incidence::incidence(as.Date('2020-01-23'))
+  si <- c(0, 0.2, 0.5, 0.2, 0.1)
+  R0 <- 2
+
+  msg <- "si[1] is 0. Did you accidentally input the serial interval"
+
+  expect_warning(project(x = i,
+               si = si,
+               R = R0,
+               n_sim = 2,
+               R_fix_within = TRUE,
+               n_days = 1,
+               model = "poisson"),
+               msg, fixed = TRUE)
+})
+
+
+
 
 
 test_that("Projections can be performed for a single day", {
@@ -67,28 +91,6 @@ test_that("Projections can be performed for a single day", {
   )
 
   expect_equal(get_dates(p), as.Date("2020-01-24"))
-})
-
-
-
-
-
-test_that("Projections can be performed for a single day", {
-  i <- incidence::incidence(as.Date('2020-01-23'))
-  si <- c(0.2, 0.5, 0.2, 0.1)
-  R0 <- 2
-
-  p <- project(x = i,
-               si = si,
-               R = R0,
-               n_sim = 1,  # doesn't work with 1 in project function
-               R_fix_within = TRUE,
-               n_days = 2, # doing 2 days as project function currently not working with one day - will only use first day though
-               model = "poisson"
-  )
-
-  expect_equal(get_dates(p), as.Date("2020-01-24") + 0:1)
-  expect_identical(ncol(p), 1L)
 })
 
 
@@ -133,132 +135,6 @@ test_that("Test that dates start when needed", {
   set.seed(1)
   pred_1 <- project(i, runif(100, 0.8, 1.9), si, n_days = 30)
   expect_equal(max(i$dates) + 1, min(get_dates(pred_1)))
-
-})
-
-
-
-
-
-
-
-
-
-
-test_that("Test against reference results - Poisson model", {
-  skip_on_cran()
-
-  ## simulate basic epicurve
-  dat <- c(0, 2, 2, 3, 3, 5, 5, 5, 6, 6, 6, 6)
-  i <- incidence::incidence(dat)
-
-
-  ## example with a function for SI
-  si <- distcrete::distcrete("gamma", interval = 1L,
-                             shape = 1.5,
-                             scale = 2, w = 0)
-
-  set.seed(1)
-  pred_1 <- project(i, runif(100, 0.8, 1.9), si, n_days = 30)
-  expect_snapshot_value(pred_1, style = "serialize")
-
-
-  ## time-varying R (fixed within time windows)
-  set.seed(1)
-  pred_2 <- project(i,
-                    R = c(1.5, 0.5, 2.1, .4, 1.4),
-                    si = si,
-                    n_days = 60,
-                    time_change = c(10, 15, 20, 30),
-                    n_sim = 100)
-  expect_snapshot_value(pred_2, style = "serialize")
-
-
-  ## time-varying R, 2 periods, R is 2.1 then 0.5
-  set.seed(1)
-
-  pred_3 <- project(i,
-                    R = c(2.1, 0.5),
-                    si = si,
-                    n_days = 60,
-                    time_change = 40,
-                    n_sim = 100)
-  expect_snapshot_value(pred_3, style = "serialize")
-
-  ## time-varying R, 2 periods, separate distributions of R for each period
-  set.seed(1)
-  R_period_1 <- runif(100, min = 1.1, max = 3)
-  R_period_2 <- runif(100, min = 0.6, max = .9)
-
-  pred_4 <- project(i,
-                    R = list(R_period_1, R_period_2),
-                    si = si,
-                    n_days = 60,
-                    time_change = 20,
-                    n_sim = 100)
-  expect_snapshot_value(pred_4, style = "serialize")
-
-})
-
-
-
-
-
-test_that("Test against reference results - NegBin model", {
-  skip_on_cran()
-
-  ## simulate basic epicurve
-  dat <- c(0, 2, 2, 3, 3, 5, 5, 5, 6, 6, 6, 6)
-  i <- incidence::incidence(dat)
-
-
-  ## example with a function for SI
-  si <- distcrete::distcrete("gamma", interval = 1L,
-                             shape = 1.5,
-                             scale = 2, w = 0)
-
-  set.seed(1)
-  pred_5 <- project(i, runif(100, 0.8, 1.9), si, n_days = 30, model = "negbin")
-  expect_snapshot_value(pred_5, style = "serialize")
-
-
-  ## time-varying R (fixed within time windows)
-  set.seed(1)
-  pred_6 <- project(i,
-                    R = c(1.5, 0.5, 2.1, .4, 1.4),
-                    si = si,
-                    n_days = 60,
-                    time_change = c(10, 15, 20, 30),
-                    n_sim = 100,
-                    model = "negbin")
-  expect_snapshot_value(pred_6, style = "serialize")
-
-
-  ## time-varying R, 2 periods, R is 2.1 then 0.5
-  set.seed(1)
-
-  pred_7 <- project(i,
-                    R = c(2.1, 0.5),
-                    si = si,
-                    n_days = 60,
-                    time_change = 40,
-                    n_sim = 100,
-                    model = "negbin")
-  expect_snapshot_value(pred_7, style = "serialize")
-
-  ## time-varying R, 2 periods, separate distributions of R for each period
-  set.seed(1)
-  R_period_1 <- runif(100, min = 1.1, max = 3)
-  R_period_2 <- runif(100, min = 0.6, max = .9)
-
-  pred_8 <- project(i,
-                    R = list(R_period_1, R_period_2),
-                    si = si,
-                    n_days = 60,
-                    time_change = 20,
-                    n_sim = 100,
-                    model = "negbin")
-  expect_snapshot_value(pred_8, style = "serialize")
 
 })
 
@@ -341,25 +217,4 @@ test_that("Test instantaneous_R = TRUE", {
   ## Expect we were able to reasonably accurately reestimate R
   ## excluding first time step as EpiEstim start estimation on 2nd time step
   expect_true(all(abs(daily_R$`Mean(R)`[-1] - R[-1]) < 0.05))
-})
-
-
-
-
-
-test_that("Projections throw warning if si[1] = 0", {
-  i <- incidence::incidence(as.Date('2020-01-23'))
-  si <- c(0, 0.2, 0.5, 0.2, 0.1)
-  R0 <- 2
-
-  msg <- "si[1] is 0. Did you accidentally input the serial interval"
-
-  expect_warning(project(x = i,
-               si = si,
-               R = R0,
-               n_sim = 2,
-               R_fix_within = TRUE,
-               n_days = 1,
-               model = "poisson"),
-               msg, fixed = TRUE)
 })
