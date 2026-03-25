@@ -76,6 +76,12 @@ project(
   quiet = FALSE,
   ...
 )
+
+# S3 method for class 'estimate_R'
+project(x, n_sim = 100, n_days = 7, R_fix_within = FALSE, ...)
+
+# S3 method for class 'wallinga_teunis'
+project(x, n_sim = 100, n_days = 7, R_fix_within = FALSE, ...)
 ```
 
 ## Arguments
@@ -84,7 +90,8 @@ project(
 
   Incidence data provided as \`numeric\` values, \`incidence\` or
   \`incidence2\` object containing daily incidence; other time intervals
-  will trigger an error.
+  will trigger an error. Outputs of \[EpiEstim::estimate_R()\] and
+  \[EpiEstim::wallinga_teunis()\] are also accepted.
 
 - ...:
 
@@ -257,6 +264,25 @@ proj_5 <- project(i,
                   n_sim = 100)
 plot(proj_5)
 
+
+## Example using EpiEstim's outputs
+if (require(EpiEstim))
+  i <- rpois(100, lambda = exp(0.0523 * 1:100))
+  si <- c(0, dexp(1:30), .1)
+  si <- si / sum(si)
+
+  R_est <- EpiEstim::estimate_R(
+    i,
+    method = "non_parametric_si",
+    config = list(t_start = 10, t_end = 90,
+                  si_distr = si, 
+                  seed = 1)
+  )
+
+  plot(R_est)
+  res <- project(R_est)
+  plot(res)
+
 }
 #> Scale for x is already present.
 #> Adding another scale for x, which will replace the existing scale.
@@ -265,5 +291,7 @@ plot(proj_5)
 #> Adding another scale for x, which will replace the existing scale.
 #> Scale for x is already present.
 #> Adding another scale for x, which will replace the existing scale.
+#> Loading required package: EpiEstim
+
 
 ```
