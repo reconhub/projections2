@@ -210,7 +210,7 @@ test_that("Re-estimation of instantaneous R gives expected results", {
 
   ## Expect we were able to reasonably accurately reestimate R
   ## excluding first time step as EpiEstim start estimation on 2nd time step
-  expect_true(all(abs(daily_R$`Mean(R)`[-1] - R[-1]) < 0.05))
+  expect_true(all(abs(daily_R$`Mean(R)` - R[-1]) < 0.05))
 })
 
 
@@ -302,5 +302,58 @@ test_that(
     expect_warning(project(i, R = 12, si = 1), msg)
     expect_no_warning(project(i, R = 12, si = 1, quiet = TRUE))
 
+  }
+)
+
+
+
+
+
+test_that(
+  "project() works with outputs of EpiEstim::estimate_R objects",
+  {
+
+    i <- rpois(100, lambda = exp(0.0523 * 1:100))
+    si <- c(0, dexp(1:30), .1)
+    si <- si / sum(si)
+    
+    R_est <- EpiEstim::estimate_R(
+      i,
+      method = "non_parametric_si",
+      config = list(t_start = 10, t_end = 90,
+                    si_distr = si, 
+                    seed = 1)
+    )
+
+    res <- project(R_est)
+    expect_true(inherits(res, "projections"))
+    
+  }
+)
+
+
+
+
+
+test_that(
+  "project() works with outputs of EpiEstim::wallinga_teunis objects",
+  {
+
+    i <- rpois(100, lambda = exp(0.0523 * 1:100))
+    si <- c(0, dexp(1:30), .1)
+    si <- si / sum(si)
+    
+    R_est <- EpiEstim::wallinga_teunis(
+      i,
+      method = "non_parametric_si",
+      config = list(t_start = 10, t_end = 90,
+                    si_distr = si, 
+                    seed = 1,
+                    n_sim = 50)
+    )
+
+    res <- project(R_est)
+    expect_true(inherits(res, "projections"))
+    
   }
 )

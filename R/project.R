@@ -11,7 +11,8 @@
 #'
 #' @param x Incidence data provided as `numeric` values, `incidence` or
 #'   `incidence2` object containing daily incidence; other time intervals will
-#'   trigger an error.
+#'   trigger an error. Outputs of [EpiEstim::estimate_R()] and
+#'   [EpiEstim::wallinga_teunis()] are also accepted.
 #'
 #' @param R A vector of numbers representing plausible reproduction numbers; for
 #'   instance, these can be samples from a posterior distribution using the
@@ -147,6 +148,25 @@
 #'                   n_sim = 100)
 #' plot(proj_5)
 #'
+#' 
+#' ## Example using EpiEstim's outputs
+#' if (require(EpiEstim))
+#'   i <- rpois(100, lambda = exp(0.0523 * 1:100))
+#'   si <- c(0, dexp(1:30), .1)
+#'   si <- si / sum(si)
+#' 
+#'   R_est <- EpiEstim::estimate_R(
+#'     i,
+#'     method = "non_parametric_si",
+#'     config = list(t_start = 10, t_end = 90,
+#'                   si_distr = si, 
+#'                   seed = 1)
+#'   )
+#' 
+#'   plot(R_est)
+#'   res <- project(R_est)
+#'   plot(res)
+#' 
 #' }
 #'
 project <- function(x, ...) {
@@ -395,13 +415,13 @@ project.integer <- function(x,
 #' @param quiet A `logical` indicating if warnings should be issued when
 #'   relevant. Defaults to `FALSE`.
 project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
-                    R_fix_within = FALSE,
-                    model = c("poisson", "negbin"),
-                    size = 0.03,
-                    time_change = NULL,
-                    instantaneous_R = FALSE,
-                    quiet = FALSE,
-                    ...) {
+                              R_fix_within = FALSE,
+                              model = c("poisson", "negbin"),
+                              size = 0.03,
+                              time_change = NULL,
+                              instantaneous_R = FALSE,
+                              quiet = FALSE,
+                              ...) {
 
   ## checks specific to incidence objects
   if (as.integer(mean(incidence::get_interval(x))) != 1L) {
@@ -446,13 +466,13 @@ project.incidence <- function(x, R, si, n_sim = 100, n_days = 7,
 #' @rdname project
 #' @export
 project.incidence2 <- function(x, R, si, n_sim = 100, n_days = 7,
-                    R_fix_within = FALSE,
-                    model = c("poisson", "negbin"),
-                    size = 0.03,
-                    time_change = NULL,
-                    instantaneous_R = FALSE,
-                    quiet = FALSE,
-                    ...) {
+                               R_fix_within = FALSE,
+                               model = c("poisson", "negbin"),
+                               size = 0.03,
+                               time_change = NULL,
+                               instantaneous_R = FALSE,
+                               quiet = FALSE,
+                               ...) {
 
   ## checks specific to incidence2 objects
   dates <- incidence2::get_dates(x)
@@ -487,6 +507,64 @@ project.incidence2 <- function(x, R, si, n_sim = 100, n_days = 7,
           size = size,
           time_change = time_change,
           instantaneous_R = instantaneous_R
+          )
+
+}
+
+
+
+
+
+#' @rdname project
+#' @export
+project.estimate_R <- function(x, n_sim = 100, n_days = 7, R_fix_within = FALSE, ...) {
+
+  ## Note: SI in EpiEstim starts at day 0; ours starts at day 1, so we ignore
+  ## the first entry
+
+  incid <- as.numeric(x$I)
+  si <- x$si_distr[-1]
+  R_values <- EpiEstim::sample_posterior_R(x, n_sim)
+  dates <- x$dates
+  project(incid,
+          R = R_values,
+          si = si,
+          n_sim = n_sim,
+          n_days = n_days,
+          dates = dates,
+          R_fix_within = R_fix_within,
+          time_change = NULL,
+          instantaneous_R = TRUE,
+          model = "poisson"
+          )
+
+}
+
+
+
+
+
+#' @rdname project
+#' @export
+project.wallinga_teunis <- function(x, n_sim = 100, n_days = 7, R_fix_within = FALSE, ...) {
+
+  ## Note: SI in EpiEstim starts at day 0; ours starts at day 1, so we ignore
+  ## the first entry
+
+  incid <- as.numeric(x$I)
+  si <- x$si_distr[-1]
+  R_values <- EpiEstim::sample_posterior_R(x, n_sim)
+  dates <- x$dates
+  project(incid,
+          R = R_values,
+          si = si,
+          n_sim = n_sim,
+          n_days = n_days,
+          dates = dates,
+          R_fix_within = R_fix_within,
+          time_change = NULL,
+          instantaneous_R = FALSE,
+          model = "poisson"
           )
 
 }
