@@ -478,9 +478,7 @@ project.incidence2 <- function(x, R, si, n_sim = 100, n_days = 7,
   dates <- incidence2::get_dates(x)
   interval <- incidence2::get_interval_duration(x)
   if (any(interval != 1L)) {
-    msg <- sprintf(
-      "daily incidence needed"
-    )
+    msg <- "daily incidence needed"
     stop(msg)
   }
 
