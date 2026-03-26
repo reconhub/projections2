@@ -45,6 +45,9 @@ test_that(
                  fixed = TRUE)
 
 
+    i <- incidence2::incidence(data.frame(t = c(0, 1, 1, 3, 3, 4)), "t", interval = 2)
+    msg <- "daily incidence needed"
+    expect_error(project(i, R = 1), msg)
   }
 )
 
