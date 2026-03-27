@@ -147,3 +147,33 @@ test_that("Test against reference results", {
   )
 
 })
+
+
+
+
+
+test_that(
+  "add_projections works with incidence2 objects", {
+
+    si <- distcrete::distcrete(
+      "gamma",
+      interval = 1L,
+      shape = 2.4,
+      scale = 4.7,
+      w = 0.5
+    )
+
+    i <- incidence2::incidence(outbreaks::ebola_sim$linelist, "date_of_onset")
+
+    ## projections after the first 100 days, over 30 days, fixed R to 2.1
+    set.seed(1)
+    R_values <- rnorm(200, mean = 2.1, sd = 0.1)
+    proj_1 <- project(x = i[1:100, ], R = R_values, si = si, n_days = 30, n_sim = 200)
+    add_projections(plot(i[1:130,]),
+                    proj_1,
+                    ribbon = FALSE,
+                    quantiles = FALSE,
+                    boxplots = TRUE)
+
+  }
+)
