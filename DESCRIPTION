@@ -12,7 +12,7 @@ Suggests:
     EpiEstim,
     ggplot2,
     grates,
-    incidence2,
+    incidence2 (>= 2.6.4.9000),
     knitr,
     magrittr,
     outbreaks,
@@ -27,3 +27,4 @@ URL: https://github.com/reconhub/projections2, http://www.repidemicsconsortium.o
 BugReports: https://github.com/reconhub/projections2/issues
 VignetteBuilder: knitr
 Config/testthat/edition: 3
+Remotes: reconverse/incidence2/pkg
